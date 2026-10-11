@@ -174,7 +174,7 @@ textarea{min-height:68px;resize:vertical}
     <div class="brand">UEH Camas</div>
     <div class="stamp" id="stamp">Sin datos</div>
     <button class="iconbtn" id="btnRefresh" type="button" aria-label="Actualizar">↻</button>
-    <button class="iconbtn" id="btnUser" type="button" aria-label="Cambiar coordinador">Salir</button>
+    <button class="iconbtn" id="btnUser" type="button" aria-label="Salir de la demostración">Salir</button>
   </div>
 </header>
 <div class="demo" id="demoBar" hidden>Modo demostración · datos ficticios · los cambios no se guardan en la planilla</div>
@@ -183,15 +183,11 @@ textarea{min-height:68px;resize:vertical}
   <!-- Ingreso -->
   <div id="vLogin" class="login" hidden>
     <div class="panel">
-      <h2>Ingreso coordinador</h2>
+      <h2>Conexión con la planilla</h2>
       <form id="fLogin">
-        <div class="field"><label for="inNombre">Nombre (queda en el registro de cambios)</label>
-          <input type="text" id="inNombre" autocomplete="name" required></div>
-        <div class="field"><label for="inClave">Clave del equipo</label>
-          <input type="password" id="inClave" autocomplete="current-password" required></div>
         <div class="field" id="urlField"><label for="inUrl">URL de la planilla (Apps Script /exec)</label>
           <input type="url" id="inUrl" placeholder="https://script.google.com/macros/s/…/exec"></div>
-        <div class="actions"><button class="btn primary" type="submit" id="btnLogin">Entrar</button>
+        <div class="actions"><button class="btn primary" type="submit" id="btnLogin">Conectar</button>
           <button class="btn" type="button" id="btnDemo">Ver demostración</button></div>
         <div class="err" id="loginErr" hidden></div>
       </form>
@@ -290,13 +286,12 @@ const store = {
 /* ====== API ====== */
 async function apiGet(){
   if (S.demo) return demoGet();
-  const u = new URL(S.sesion.url); u.searchParams.set('clave', S.sesion.clave);
-  const r = await fetch(u.toString(), {cache:'no-store'});
+  const r = await fetch(S.sesion.url, {cache:'no-store'});
   return r.json();
 }
 async function apiPost(body){
   if (S.demo) return demoPost(body);
-  const r = await fetch(S.sesion.url, {method:'POST', body: JSON.stringify(Object.assign({clave:S.sesion.clave, autor:S.sesion.nombre}, body))});
+  const r = await fetch(S.sesion.url, {method:'POST', body: JSON.stringify(Object.assign({autor:'App móvil'}, body))});
   return r.json();
 }
 
@@ -305,7 +300,7 @@ async function cargar(silencioso){
   try{
     if (!silencioso) $('stamp').textContent = 'Actualizando…';
     const res = await apiGet();
-    if (!res.ok){ if (res.error === 'clave') return salir('La clave no es válida.'); throw new Error(res.error); }
+    if (!res.ok){ if (res.error === 'clave') return salir('El script de la planilla todavía pide clave. Borra la propiedad CLAVE en Apps Script.'); throw new Error(res.error); }
     S.estado = res.estado; render();
   }catch(e){
     $('stamp').textContent = 'Sin conexión con la planilla';
@@ -329,7 +324,7 @@ function corto(s){ return {P3:'P3',P2:'P2',P1:'P1',CR:'CR',EX:'EXT',PA:'PA',C34:
 function render(){
   const e = S.estado; if (!e) return;
   const t = new Date(e.leido);
-  $('stamp').textContent = t.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'}) + (S.sesion?.nombre ? ' · ' + S.sesion.nombre : '');
+  $('stamp').textContent = t.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'}) ;
   $('stamp').title = 'Actualizado ' + t.toLocaleString('es-CL');
   renderResumen(); renderAlertas(); renderTabs(); renderSectores(); renderTel();
   $('gesTxt').textContent = e.ges || 'Sin información.';
@@ -512,7 +507,7 @@ async function guardar(liberar){
     if (res.estado){ S.estado = res.estado; render(); }
     if (!res.ok){
       if (res.error === 'conflicto'){ toast('Otro coordinador cambió este box. Revisa los datos nuevos y vuelve a guardar.'); abrirEditor(e.sector+'|'+e.fila); return; }
-      if (res.error === 'clave') return salir('La clave cambió. Ingresa de nuevo.');
+      if (res.error === 'clave') return salir('El script de la planilla pide clave.');
       throw new Error(res.error);
     }
     cerrarEditor(); toast(liberar ? 'Box liberado' : 'Guardado en la planilla');
@@ -578,13 +573,13 @@ $('fLogin').addEventListener('submit', async ev => {
   const url = (CONFIG.API_URL || $('inUrl').value).trim();
   if (!/^https:\/\/script\.google\.com\//.test(url)) return loginErr('La URL debe empezar con https://script.google.com/');
   S.demo = false;
-  S.sesion = {nombre: $('inNombre').value.trim(), clave: $('inClave').value, url};
+  S.sesion = {url};
   $('btnLogin').disabled = true; $('btnLogin').textContent = 'Conectando…';
   try{
     const res = await apiGet();
-    if (!res.ok) throw new Error(res.error === 'clave' ? 'La clave no es válida.' : 'La planilla respondió con un error: ' + res.error);
+    if (!res.ok) throw new Error(res.error === 'clave' ? 'El script de la planilla pide clave.' : 'La planilla respondió con un error: ' + res.error);
     store.set('sesion', S.sesion); S.estado = res.estado; mostrarApp();
-  }catch(err){ loginErr(err.message.startsWith('La ') ? err.message : 'No se pudo conectar. Revisa la URL y tu conexión.'); }
+  }catch(err){ loginErr(/^(La|El) /.test(err.message) ? err.message : 'No se pudo conectar. Revisa la URL y tu conexión.'); }
   finally{ $('btnLogin').disabled = false; $('btnLogin').textContent = 'Entrar'; }
 });
 function loginErr(m){ $('loginErr').textContent = m; $('loginErr').hidden = false; }
@@ -597,13 +592,12 @@ function verVista(v){
 }
 function mostrarApp(){
   $('vLogin').hidden = true; $('nav').hidden = false; $('demoBar').hidden = !S.demo;
-  $('btnUser').hidden = false; verVista('vCamas'); render();
+  $('btnUser').hidden = !S.demo; verVista('vCamas'); render();
 }
 function salir(msg, conservar){
   const prev = S.sesion;
   if (!conservar) store.del('sesion');
-  if (prev && prev.nombre && prev.nombre !== 'Demo') $('inNombre').value = prev.nombre;
-  if (conservar && prev){ $('inClave').value = prev.clave || ''; $('inUrl').value = prev.url || ''; }
+  if (conservar && prev && prev.url) $('inUrl').value = prev.url;
   S.sesion = null; S.estado = null; S.demo = false; cerrarEditor();
   ['vCamas','vTel','vGes'].forEach(id => $(id).hidden = true);
   $('nav').hidden = true; $('demoBar').hidden = true; $('btnUser').hidden = true;
@@ -611,7 +605,7 @@ function salir(msg, conservar){
   $('stamp').textContent = 'Sin datos';
   if (msg) loginErr(msg); else $('loginErr').hidden = true;
 }
-function entrarDemo(){ S.demo = true; S.sesion = {nombre:'Demo'}; S.estado = null; demoGet().then(r => { S.estado = r.estado; mostrarApp(); }); }
+function entrarDemo(){ S.demo = true; S.sesion = {}; S.estado = null; demoGet().then(r => { S.estado = r.estado; mostrarApp(); }); }
 
 setInterval(() => { if (S.estado && !S.demo && document.visibilityState === 'visible' && !S.editando) cargar(true); }, CONFIG.REFRESCO_SEG * 1000);
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && S.estado && !S.demo && !S.editando) cargar(true); });
@@ -677,11 +671,12 @@ function toast(m){ const t = $('toast'); t.textContent = m; t.hidden = false; cl
   S.sector = store.get('sector') || 'todos';
   S.ocultar = !!store.get('ocultar'); $('ocultarLibres').checked = S.ocultar;
   const ses = store.get('sesion');
-  if (ses && (ses.url || CONFIG.API_URL)){
-    S.sesion = Object.assign({}, ses, {url: CONFIG.API_URL || ses.url});
-    $('btnUser').hidden = false;
-    apiGet().then(res => { if (res.ok){ S.estado = res.estado; mostrarApp(); } else salir(res.error === 'clave' ? 'La clave cambió. Ingresa de nuevo.' : ''); })
-            .catch(() => { salir('No se pudo conectar con la planilla. Revisa la conexión y toca Entrar.', true); });
+  const url = CONFIG.API_URL || (ses && ses.url);
+  if (url){
+    S.sesion = {url};
+    $('stamp').textContent = 'Conectando…';
+    apiGet().then(res => { if (res.ok){ S.estado = res.estado; mostrarApp(); } else salir(res.error === 'clave' ? 'El script de la planilla pide clave.' : 'La planilla respondió con un error.', true); })
+            .catch(() => { salir('No se pudo conectar con la planilla. Revisa la conexión y toca Conectar.', true); });
   } else {
     salir();
   }

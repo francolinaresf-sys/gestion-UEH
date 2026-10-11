@@ -4,13 +4,14 @@
  *
  * Instalación (una sola vez):
  *  1. Abrir la planilla → Extensiones → Apps Script. Pegar este archivo completo.
- *  2. Ejecutar la función `configurarClave` (menú ▶). Autorizar con la cuenta dueña.
- *     Antes, cambiar el texto CAMBIAR_ESTA_CLAVE por la clave del equipo.
+ *  2. Ejecutar la función `probar` (menú ▶) y autorizar con la cuenta dueña de la planilla.
  *  3. Implementar → Nueva implementación → Tipo: Aplicación web
  *       Ejecutar como: Yo   ·   Quién tiene acceso: Cualquier persona
  *  4. Copiar la URL /exec y pegarla en CONFIG.API_URL de index.html.
  *
  * La página no guarda datos: los lee y escribe aquí, en la planilla.
+ * Acceso abierto: no pide clave ni usuario. Quien tenga el enlace puede ver y editar.
+ * (Opcional) Para volver a exigir clave, ejecutar `configurarClave` con una clave real.
  */
 
 const HOJA_CAMAS = 'S. Urgencia';
@@ -46,6 +47,10 @@ const CONTADORES = {
   capc:   { nombre: 'CAPC',  a1: 'K21' },
   dosydos:{ nombre: '2 y 2', a1: 'K22' }
 };
+
+function probar() {
+  Logger.log(JSON.stringify(leerEstado_().resumen));
+}
 
 function configurarClave() {
   PropertiesService.getScriptProperties().setProperty('CLAVE', 'CAMBIAR_ESTA_CLAVE');
@@ -246,7 +251,7 @@ function registrar_(ss, autor, detalle) {
 
 function claveValida_(clave) {
   const k = PropertiesService.getScriptProperties().getProperty('CLAVE');
-  return !!k && clave === k;
+  return !k || clave === k; // sin clave configurada: acceso abierto
 }
 
 function json_(obj) {
