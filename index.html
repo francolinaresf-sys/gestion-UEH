@@ -353,7 +353,7 @@ function renderResumen(){
       <div class="wide"><span>Extensionables</span><b>${esc(x.extensionables??'–')}</b></div>
       <div class="wide"><span>CHUAPeables</span><b>${esc(x.chuapeables??'–')}</b></div>
     </div>
-    <div class="cnt">${Object.entries(c).map(([k,v]) => `
+    <div class="cnt">${Object.entries(c).filter(([k]) => k !== 'dosydos').map(([k,v]) => `
       <div class="stepper"><span>${esc(v.nombre)}</span>
         <button type="button" data-cnt="${k}" data-d="-1" aria-label="Restar ${esc(v.nombre)}">−</button>
         <b>${v.valor}</b>

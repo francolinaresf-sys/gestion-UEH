@@ -44,8 +44,7 @@ const MARCAS = {
 
 // Celdas sueltas que alimentan el resumen (ver fórmula VALECH)
 const CONTADORES = {
-  capc:   { nombre: 'CAPC',  a1: 'K21' },
-  dosydos:{ nombre: '2 y 2', a1: 'K22' }
+  capc:   { nombre: 'CAPC',  a1: 'K21' }
 };
 
 function probar() {

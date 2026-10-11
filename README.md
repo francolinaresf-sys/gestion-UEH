@@ -38,7 +38,7 @@ La página no guarda datos de pacientes: en cada uso los lee y escribe directame
 | Destino / cama que necesita | Columna con la lista desplegable (UTI, SALA - M, …) |
 | Fecha de ingreso | Columna FI. La Estada sigue calculándose con la fórmula de la planilla |
 | Marca | Color de relleno de la celda Diagnóstico, según la leyenda "Significado colores" |
-| CAPC y 2 y 2 | Celdas K21 y K22, que suma la fórmula VALECH |
+| CAPC | Celda K21, que suma la fórmula VALECH |
 | Liberar box | Borra diagnóstico, pendientes, marca y FI, y deja el destino en LIBRE |
 
 - Todos los números del resumen provienen de las fórmulas de la hoja "Resumen hospitalizados". La ocupación se calcula sobre 74 camillas.
