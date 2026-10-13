@@ -114,7 +114,9 @@ h2{font-family:var(--f-num);font-weight:600;font-size:15px;letter-spacing:.09em;
 .bside{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
 .pill{border-radius:6px;padding:3px 7px;font-size:12px;font-weight:700;white-space:nowrap;background:var(--surface-2)}
 .days{font-family:var(--f-num);font-size:15px;font-weight:600;padding:1px 7px;border-radius:6px}
-.d-ok{background:var(--ok-bg);color:var(--ok)} .d-warn{background:var(--warn-bg);color:var(--warn)} .d-crit{background:var(--crit-bg);color:var(--crit)}
+.d-ok{background:var(--ok-bg);color:var(--ok)} .d-warn{background:var(--warn-bg);color:var(--warn)} .d-crit{background:var(--crit);color:var(--surface);font-weight:700}
+.box.largo{background:var(--crit-bg)}
+.box.largo .bnum{color:var(--crit)}
 .empty-state{padding:24px 16px;color:var(--muted);text-align:center}
 
 /* Navegación inferior */
@@ -324,7 +326,7 @@ function diasEstada(fi){
   const a = new Date(fi+'T00:00:00'), b = new Date(S.estado.hoy+'T00:00:00');
   return Math.round((b-a)/86400000);
 }
-function claseDias(d){ return d < 2 ? 'd-ok' : d === 2 ? 'd-warn' : 'd-crit'; }
+function claseDias(d){ return d >= 3 ? 'd-crit' : d === 2 ? 'd-warn' : 'd-ok'; }
 function todosLosBoxes(){
   return S.estado.sectores.flatMap(s => s.boxes.map(b => Object.assign({sector:s.id, sectorNombre:s.nombre, tipo:s.tipo}, b)));
 }
@@ -376,7 +378,7 @@ function renderAlertas(){
   const filas = [
     ['Ley de Urgencia', bx.filter(b => b.marca === 'ley')],
     ['Reevaluar', bx.filter(b => b.marca === 'reevaluar')],
-    ['Estada > 2 días', bx.filter(b => { const d = diasEstada(b.fi); return d !== null && d > 2 && !NO_HOSP.includes(b.destino); })],
+    ['Estada ≥ 3 días', bx.filter(b => { const d = diasEstada(b.fi); return d !== null && d >= 3 && !NO_HOSP.includes(b.destino); })],
     ['Pendientes', bx.filter(b => b.marca === 'pendientes' || b.nota)],
     ['Por trasladar', bx.filter(b => b.marca === 'trasladar')]
   ];
@@ -412,7 +414,8 @@ function boxHtml(s, b){
   const d = s.tipo === 'completo' ? diasEstada(b.fi) : null;
   const dc = b.destino ? DESTINO_COLOR[b.destino] : null;
   const mk = b.marca ? MARCAS[b.marca].hex : 'transparent';
-  return `<button type="button" class="box" data-edit="${s.id}|${b.fila}" style="--mk:${mk}" aria-label="Box ${esc(b.box)} ${esc(b.dx)}">
+  const largo = d !== null && d >= 3 && !NO_HOSP.includes(b.destino || '');
+  return `<button type="button" class="box${largo ? ' largo' : ''}" data-edit="${s.id}|${b.fila}" style="--mk:${mk}" aria-label="Box ${esc(b.box)} ${esc(b.dx)}">
     <div class="bnum ${b.box.length > 3 ? 'small' : ''}">${esc(b.box)}</div>
     <div class="bbody">
       <div class="bdx ${b.dx ? '' : 'empty'}">${esc(b.dx || 'Sin diagnóstico')}</div>
@@ -420,7 +423,7 @@ function boxHtml(s, b){
     </div>
     <div class="bside">
       ${b.destino ? `<span class="pill" style="${dc ? `background:${dc[0]};color:${dc[1]}` : ''}">${esc(b.destino)}</span>` : ''}
-      ${d !== null ? `<span class="days ${claseDias(d)}">${d} d</span>` : ''}
+      ${d !== null ? `<span class="days ${claseDias(d)}">${d} d${d >= 3 ? ' ⚠' : ''}</span>` : ''}
     </div>
   </button>`;
 }
