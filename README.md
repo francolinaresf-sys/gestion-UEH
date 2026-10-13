@@ -40,6 +40,7 @@ La página no guarda datos de pacientes: en cada uso los lee y escribe directame
 | Marca | Color de relleno de la celda Diagnóstico, según la leyenda "Significado colores" |
 | CAPC | Celda K21, que suma la fórmula VALECH |
 | Liberar box | Borra diagnóstico, pendientes, marca y FI, y deja el destino en LIBRE |
+| Mover a otro box | Corta y pega el paciente (FI, destino, diagnóstico, pendientes y colores) en otro box. Si el box elegido está ocupado, los dos pacientes se intercambian |
 
 - Todos los números del resumen provienen de las fórmulas de la hoja "Resumen hospitalizados". La ocupación se calcula sobre 74 camillas.
 - Cada cambio queda registrado en la hoja **Registro app** (fecha y cambio). La hoja se crea sola con el primer cambio.

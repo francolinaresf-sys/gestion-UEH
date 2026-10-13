@@ -82,6 +82,11 @@ function doPost(e) {
       if (detalle && detalle.conflicto) {
         return json_({ ok: false, error: 'conflicto', estado: leerEstado_() });
       }
+    } else if (req.accion === 'mover') {
+      detalle = moverBox_(sh, req);
+      if (detalle && detalle.conflicto) {
+        return json_({ ok: false, error: 'conflicto', estado: leerEstado_() });
+      }
     } else if (req.accion === 'contador') {
       const c = CONTADORES[req.id];
       if (!c) throw new Error('Contador desconocido');
@@ -233,6 +238,75 @@ function editarBox_(sh, req) {
     log.push('FI');
   }
   return s.nombre + ' box ' + box + ': ' + log.join(', ');
+}
+
+// "Cortar y pegar": lleva al paciente del box origen al box destino.
+// Si el destino tiene paciente, los dos se intercambian.
+function moverBox_(sh, req) {
+  const a = celdasBox_(sh, req.origen), b = celdasBox_(sh, req.destino);
+  if (a.s.id === b.s.id && a.f === b.f) throw new Error('Origen y destino son el mismo box');
+
+  const esp = req.esperado || {};
+  if (!coincide_(a, esp.origen) || !coincide_(b, esp.destino)) return { conflicto: true };
+
+  const da = leerBox_(a), db = leerBox_(b);
+  escribirBox_(a, db);
+  escribirBox_(b, da);
+  const vacio = !db.dx && !db.nota && (!b.dest || ['', 'LIBRE', 'AMB'].indexOf(db.destino) >= 0);
+  return a.s.nombre + ' box ' + a.box + (vacio ? ' → ' : ' ⇄ ') + b.s.nombre + ' box ' + b.box;
+}
+
+function celdasBox_(sh, ref) {
+  const s = SECTORES.filter(function (x) { return x.id === (ref || {}).sector; })[0];
+  if (!s) throw new Error('Sector desconocido');
+  const f = Number(ref.fila);
+  if (!(f >= s.desde && f <= s.hasta)) throw new Error('Fila fuera del sector');
+  const c = s.col, completo = s.tipo === 'completo';
+  return {
+    s: s, f: f,
+    box: String(sh.getRange(f, c).getDisplayValue()).trim(),
+    dx: sh.getRange(f, completo ? c + 4 : c + 1),
+    dest: completo ? sh.getRange(f, c + 3) : null,
+    fi: completo ? sh.getRange(f, c + 1) : null
+  };
+}
+
+function coincide_(cel, esp) {
+  esp = esp || {};
+  if (limpiar_(cel.dx.getDisplayValue()) !== (esp.dx || '')) return false;
+  if (cel.dest && limpiar_(cel.dest.getDisplayValue()) !== (esp.destino || '')) return false;
+  return true;
+}
+
+function leerBox_(cel) {
+  return {
+    dx: cel.dx.getValue(),
+    nota: cel.dx.getNote(),
+    bgDx: cel.dx.getBackground(),
+    destino: cel.dest ? limpiar_(cel.dest.getDisplayValue()) : null,
+    bgDest: cel.dest ? cel.dest.getBackground() : null,
+    fi: cel.fi ? cel.fi.getValue() : null
+  };
+}
+
+function escribirBox_(cel, d) {
+  cel.dx.setValue(d.dx === '' || d.dx == null ? '' : d.dx);
+  if (d.nota) cel.dx.setNote(d.nota); else cel.dx.clearNote();
+  cel.dx.setBackground(d.bgDx && d.bgDx !== '#ffffff' ? d.bgDx : null);
+  if (cel.dest) {
+    // Si viene de un box sin destino (C3-4), queda sin destino para completarlo
+    let destino = d.destino;
+    if (destino === null) destino = d.dx ? '' : 'LIBRE';
+    if (!destino && !d.dx) destino = 'LIBRE';
+    cel.dest.setValue(destino);
+    cel.dest.setBackground(d.bgDest && d.bgDest !== '#ffffff' ? d.bgDest : null);
+  }
+  if (cel.fi) {
+    if (d.fi instanceof Date) cel.fi.setValue(d.fi).setNumberFormat('dd/mm/yyyy');
+    else if (d.fi) cel.fi.setValue(d.fi);
+    else if (d.fi === null && d.dx) cel.fi.setValue(new Date()).setNumberFormat('dd/mm/yyyy');
+    else cel.fi.clearContent();
+  }
 }
 
 function registrar_(ss, autor, detalle) {

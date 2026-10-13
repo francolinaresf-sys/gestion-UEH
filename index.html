@@ -149,6 +149,16 @@ textarea{min-height:68px;resize:vertical}
 .mk[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
 .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
 .actions .primary{flex:1}
+.mvpanel{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+.mvsec{margin-top:10px}
+.mvsec small{display:block;font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.mvgrid{display:flex;flex-wrap:wrap;gap:6px}
+.mv{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 9px;font-size:13px;font-weight:700;max-width:100%;text-align:left}
+.mv b{font-family:var(--f-num);font-size:17px;margin-right:4px}
+.mv.libre{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.mv.ocup span{font-weight:400;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block;max-width:150px;vertical-align:bottom}
+.mv[aria-pressed="true"]{outline:3px solid var(--accent);outline-offset:1px}
+.mvconfirm{margin-top:10px;background:var(--surface-2);border-radius:10px;padding:10px;font-size:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .confirm{margin-top:10px;background:var(--crit-bg);border-radius:10px;padding:10px;font-size:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 
 /* Login, anexos, GES */
@@ -474,13 +484,69 @@ function abrirEditor(key){
       </div></div>
     <div class="actions">
       <button type="button" class="btn primary" id="edSave">Guardar</button>
+      ${tienePaciente(b, completo) ? '<button type="button" class="btn" id="edMove">Mover a otro box</button>' : ''}
       <button type="button" class="btn danger" id="edFree">Liberar box</button>
+    </div>
+    <div class="mvpanel" id="edMovePanel" hidden>
+      <span class="flabel">Mover a… (verde = libre; si eliges uno ocupado, se intercambian)</span>
+      ${htmlMover(sector, Number(fila))}
+      <div class="mvconfirm" id="edMoveConfirm" hidden><span id="edMoveTxt"></span>
+        <button type="button" class="btn primary" id="edMoveYes">Confirmar</button><button type="button" class="btn" id="edMoveNo">Cancelar</button></div>
     </div>
     <div class="confirm" id="edConfirm" hidden>Se borran diagnóstico, pendientes, marca${completo ? ', fecha de ingreso y el destino queda LIBRE' : ''}.
       <button type="button" class="btn danger" id="edFreeYes">Sí, liberar</button><button type="button" class="btn" id="edFreeNo">No</button></div>`;
   $('scrim').hidden = false;
   document.body.style.overflow = 'hidden';
   setTimeout(() => $('edDx').focus({preventScroll:true}), 50);
+}
+
+function tienePaciente(b, completo){ return !!(b.dx || b.nota || (completo && !NO_HOSP.includes(b.destino || ''))); }
+
+function htmlMover(sector, fila){
+  return S.estado.sectores.map(s => {
+    const items = s.boxes.filter(b => !(s.id === sector && b.fila === fila)).map(b => {
+      const ocup = tienePaciente(b, s.tipo === 'completo');
+      return `<button type="button" class="mv ${ocup ? 'ocup' : 'libre'}" data-mvto="${s.id}|${b.fila}"><b>${esc(b.box)}</b>${ocup ? `<span>${esc(b.dx || b.destino || 'ocupado')}</span>` : 'libre'}</button>`;
+    }).join('');
+    return items ? `<div class="mvsec"><small>${esc(s.nombre)}</small><div class="mvgrid">${items}</div></div>` : '';
+  }).join('');
+}
+
+function elegirDestino(key){
+  const e = S.editando; if (!e) return;
+  const [sec, fila] = key.split('|');
+  const f = buscarBox(sec, fila); if (!f || !f.b) return;
+  e.moverA = {sector: sec, fila: Number(fila)};
+  document.querySelectorAll('.mv').forEach(x => x.setAttribute('aria-pressed', x.dataset.mvto === key));
+  const o = buscarBox(e.sector, e.fila);
+  const ocup = tienePaciente(f.b, f.s.tipo === 'completo');
+  $('edMoveTxt').textContent = ocup
+    ? `Intercambiar ${o.s.nombre} box ${o.b.box} con ${f.s.nombre} box ${f.b.box} (${f.b.dx || f.b.destino}).`
+    : `Mover a ${f.s.nombre} box ${f.b.box}. El box ${o.b.box} queda libre.`;
+  if (f.s.tipo === 'simple' && o.s.tipo === 'completo') $('edMoveTxt').textContent += ' En C3-4 no se guardan fecha de ingreso ni destino.';
+  $('edMoveConfirm').hidden = false;
+  $('edMoveConfirm').scrollIntoView({block:'nearest'});
+}
+
+async function mover(){
+  const e = S.editando; if (!e || !e.moverA) return;
+  const o = e.orig, d = buscarBox(e.moverA.sector, e.moverA.fila).b;
+  S.ocupado = true; $('edMoveYes').disabled = true; $('edMoveYes').textContent = 'Moviendo…';
+  try{
+    const res = await apiPost({accion:'mover', origen:{sector:e.sector, fila:e.fila}, destino:e.moverA,
+      esperado:{origen:{dx:o.dx, destino:o.destino||''}, destino:{dx:d.dx, destino:d.destino||''}}});
+    S.ocupado = false;
+    if (res.estado){ S.estado = res.estado; render(); }
+    if (!res.ok){
+      if (res.error === 'conflicto'){ toast('Uno de los dos boxes cambió recién. Revisa y vuelve a intentar.'); abrirEditor(e.sector+'|'+e.fila); return; }
+      throw new Error(res.error);
+    }
+    cerrarEditor(); toast('Paciente movido');
+  }catch(err){
+    S.ocupado = false;
+    if ($('edMoveYes')){ $('edMoveYes').disabled = false; $('edMoveYes').textContent = 'Confirmar'; }
+    toast('No se movió. Si recién se actualizó la página, publica la nueva versión del script.');
+  }
 }
 
 function cerrarEditor(){ $('scrim').hidden = true; document.body.style.overflow = ''; S.editando = null; }
@@ -540,6 +606,7 @@ document.addEventListener('click', ev => {
     (navigator.clipboard?.writeText(v) || Promise.reject()).then(() => toast('Anexo ' + v + ' copiado'), () => toast('Mantén presionado el número para copiarlo'));
     return;
   }
+  if (t.dataset.mvto) return elegirDestino(t.dataset.mvto);
   if (t.dataset.dest !== undefined && S.editando){
     S.editando.dest = t.dataset.dest;
     document.querySelectorAll('.opt').forEach(b => b.setAttribute('aria-pressed', b.dataset.dest === S.editando.dest));
@@ -554,6 +621,9 @@ document.addEventListener('click', ev => {
     case 'edClose': return cerrarEditor();
     case 'edHoy': $('edFi').value = S.estado.hoy; return;
     case 'edSave': return guardar(false);
+    case 'edMove': $('edMovePanel').hidden = !$('edMovePanel').hidden; if (!$('edMovePanel').hidden) $('edMovePanel').scrollIntoView({block:'start', behavior:'smooth'}); return;
+    case 'edMoveNo': $('edMoveConfirm').hidden = true; if (S.editando) S.editando.moverA = null; document.querySelectorAll('.mv').forEach(x => x.setAttribute('aria-pressed','false')); return;
+    case 'edMoveYes': return mover();
     case 'edFree': $('edConfirm').hidden = false; return;
     case 'edFreeNo': $('edConfirm').hidden = true; return;
     case 'edFreeYes': return guardar(true);
@@ -638,7 +708,7 @@ function demoInit(){
 function demoResumen(){
   const cuenta = (lista, rango) => { let n = 0; DEMO.sectores.filter(s => !rango || rango.includes(s.id)).forEach(s => s.boxes.forEach(b => { if (lista.some(l => l.endsWith('*') ? (b.destino||'').startsWith(l.slice(0,-1)) : b.destino === l)) n++; })); return n; };
   const HOSP = ['SALA - EXT','SALA - M','SALA - H','SALA - AISL','HOSDOM','UTI','PSIQ - UTI','UTI - AISL','PSIQ - SEG','PSIQ - EVA','EV ALTA','PSIQ - UCE','MD †','PABELLON','CHUAP*','UCI','HSBA','Traslado'];
-  const valech = cuenta(HOSP, ['P3','P2','P1','CR']) + DEMO.contadores.capc.valor + DEMO.contadores.dosydos.valor;
+  const valech = cuenta(HOSP, ['P3','P2','P1','CR']) + DEMO.contadores.capc.valor + DEMO.sectores.find(x => x.id === 'C34').boxes.filter(b => b.dx).length;
   const ext = cuenta(HOSP, ['EX','PA']);
   const total = valech + ext;
   DEMO.resumen = {
@@ -656,6 +726,16 @@ function demoResumen(){
 async function demoGet(){ if (!DEMO) demoInit(); demoResumen(); DEMO.leido = new Date().toISOString(); return {ok:true, estado: JSON.parse(JSON.stringify(DEMO))}; }
 async function demoPost(r){
   if (r.accion === 'contador'){ DEMO.contadores[r.id].valor = r.valor; return demoGet(); }
+  if (r.accion === 'mover'){
+    const sa = DEMO.sectores.find(x => x.id === r.origen.sector), a = sa.boxes.find(x => x.fila === r.origen.fila);
+    const sb = DEMO.sectores.find(x => x.id === r.destino.sector), b = sb.boxes.find(x => x.fila === r.destino.fila);
+    const pick = (x, s) => ({dx:x.dx, nota:x.nota, marca:x.marca, fi: s.tipo === 'completo' ? x.fi : null, destino: s.tipo === 'completo' ? x.destino : null});
+    const da = pick(a, sa), db = pick(b, sb);
+    const put = (x, s, d) => { x.dx = d.dx; x.nota = d.nota; x.marca = d.marca;
+      if (s.tipo === 'completo'){ x.destino = d.destino ?? (d.dx ? '' : 'LIBRE'); if (!x.destino && !d.dx) x.destino = 'LIBRE'; x.fi = d.fi ?? (d.dx ? DEMO.hoy : ''); } };
+    put(a, sa, db); put(b, sb, da);
+    return demoGet();
+  }
   const s = DEMO.sectores.find(x => x.id === r.sector), b = s.boxes.find(x => x.fila === r.fila);
   if (r.liberar){ b.dx = ''; b.nota = ''; b.marca = ''; if (s.tipo === 'completo'){ b.destino = 'LIBRE'; b.fi = ''; } }
   else Object.assign(b, r.cambios);
