@@ -379,6 +379,7 @@ function renderAlertas(){
     ['Ley de Urgencia', bx.filter(b => b.marca === 'ley')],
     ['Reevaluar', bx.filter(b => b.marca === 'reevaluar')],
     ['Estada ≥ 3 días', bx.filter(b => { const d = diasEstada(b.fi); return d !== null && d >= 3 && !NO_HOSP.includes(b.destino); })],
+    ['Pabellón', bx.filter(b => b.destino === 'PABELLON' || /pabell[oó]n/i.test(b.nota || ''))],
     ['Pendientes', bx.filter(b => b.marca === 'pendientes' || b.nota)],
     ['Por trasladar', bx.filter(b => b.marca === 'trasladar')]
   ];
