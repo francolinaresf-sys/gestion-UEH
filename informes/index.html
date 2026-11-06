@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0b2545">
+<title>Informes UEH-HUAP · Índice 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Índice de informes de la jefatura UEH-HUAP. Datos en el arreglo INFORMES (más abajo). */
+:root{
+  --navy:#0b2545; --blue:#1f5fa8; --blue-2:#e7eff9; --bg:#f4f6f9; --surface:#fff;
+  --fg:#15212e; --muted:#5b6b7c; --line:#d9e1ea; --gold:#c98a00; --gold-bg:#fff6dd;
+  --ok:#2e7d4f; --ok-bg:#e3f3e9; --old:#7a8794; --old-bg:#eef1f4; --warn:#b5541b; --warn-bg:#fdebe0;
+  --shadow:0 1px 2px rgba(11,37,69,.06),0 4px 14px rgba(11,37,69,.06);
+  --f-t:"Montserrat",system-ui,sans-serif; --f-b:"Source Sans 3",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0c1520; --surface:#14202e; --fg:#e4ebf3; --muted:#9aabbd; --line:#26364a; --blue-2:#1a2d45;
+  --blue:#6ea8ef; --gold-bg:#3a2d08; --gold:#f0bb3a; --ok-bg:#163021; --ok:#74c995; --old-bg:#1d2836; --old:#9aa7b4;
+  --warn-bg:#3a2112; --warn:#f09a63; --shadow:none}}
+*{box-sizing:border-box} html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.45 var(--f-b);padding-bottom:env(safe-area-inset-bottom)}
+header{background:var(--navy);color:#fff;padding:calc(18px + env(safe-area-inset-top)) 18px 18px}
+header small{font:700 11px var(--f-t);letter-spacing:.12em;opacity:.75;text-transform:uppercase}
+header h1{font:800 22px/1.2 var(--f-t);margin:6px 0 4px}
+header p{margin:0;opacity:.85;font-size:14px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 14px}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);padding:12px 0 8px;border-bottom:1px solid var(--line)}
+.search{width:100%;font:16px var(--f-b);padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--fg)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 0 2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:7px 13px;font:600 14px var(--f-b);cursor:pointer}
+.chip[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.toggle{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted);margin-top:8px}
+h2{font:700 15px var(--f-t);color:var(--navy);margin:26px 0 10px;display:flex;align-items:center;gap:8px}
+@media (prefers-color-scheme:dark){h2{color:#cfe0f5}}
+h2 .n{font:600 12px var(--f-b);color:var(--muted)}
+.hero{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:7px}
+.card.star{border:2px solid var(--gold);background:linear-gradient(180deg,var(--gold-bg),var(--surface) 70%)}
+.card.old{opacity:.82}
+.card h3{font:700 15.5px/1.3 var(--f-t);margin:0}
+.meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px;color:var(--muted)}
+.tag{font:700 11px var(--f-b);padding:2px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:.03em}
+.t-vig{background:var(--ok-bg);color:var(--ok)} .t-def{background:var(--gold);color:#fff}
+.t-ant{background:var(--old-bg);color:var(--old)} .t-env{background:var(--blue-2);color:var(--blue)}
+.t-fmt{background:var(--blue-2);color:var(--blue)}
+.desc{margin:0;font-size:14.5px}
+.path{font-size:12px;color:var(--muted);word-break:break-word}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:4px}
+.btn{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font:700 14px var(--f-b);padding:9px 13px;border-radius:9px;background:var(--blue);color:#fff;min-height:40px}
+.btn.sec{background:transparent;color:var(--blue);border:1px solid var(--line)}
+.btn.pend{background:var(--warn-bg);color:var(--warn)}
+.empty{color:var(--muted);padding:20px 0}
+footer{color:var(--muted);font-size:12.5px;padding:28px 0 40px;border-top:1px solid var(--line);margin-top:30px}
+footer a{color:var(--blue)}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <small>Jefatura UEH · HUAP</small>
+    <h1>Informes y análisis 2026</h1>
+    <p>Acceso rápido por temática. Destacados: los análisis DAU definitivos.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="bar">
+    <input class="search" id="q" type="search" placeholder="Buscar: boarding, ESI 2, paliativo, IFEM…" autocomplete="off">
+    <div class="chips" id="chips" role="toolbar" aria-label="Temáticas"></div>
+    <label class="toggle"><input type="checkbox" id="showOld" checked> Mostrar versiones anteriores</label>
+  </div>
+
+  <section id="hero-sec">
+    <h2>★ Análisis DAU definitivos <span class="n">versión vigente para citar</span></h2>
+    <div class="hero" id="hero"></div>
+  </section>
+
+  <div id="list"></div>
+
+  <footer>
+    Los documentos viven en Google Drive (privado): esta página solo los enumera y no contiene datos de pacientes.
+    Respaldo completo: <a href="https://drive.google.com/drive/folders/1zhZMfN6pnJXpicIrTqtAOeQqyHjFL06Q" target="_blank" rel="noopener">carpeta «UEH-HUAP · Informes 2026»</a>.
+    <br>Fichas marcadas «Subir a Drive» aún no tienen copia enlazada. Actualizado: <span id="upd"></span>.
+  </footer>
+</div>
+
+<script>
+// ── Configuración ────────────────────────────────────────────────
+const ACTUALIZADO = '6 de noviembre de 2026';
+const CARPETA = 'https://drive.google.com/drive/folders/1zhZMfN6pnJXpicIrTqtAOeQqyHjFL06Q';
+const D = id => 'https://drive.google.com/file/d/' + id + '/view';
+const S = id => 'https://docs.google.com/presentation/d/' + id + '/edit';
+const G = id => 'https://docs.google.com/document/d/' + id + '/edit';
+
+const TEMAS = [
+  ['dau', 'Análisis DAU e indicadores'],
+  ['quir', 'Paciente quirúrgico'],
+  ['flujo', 'Boarding y flujo'],
+  ['anis', 'Serie ANIS'],
+  ['calidad', 'Calidad, COMGES y acreditación'],
+  ['clinica', 'Reuniones clínicas y paliativo'],
+  ['legal', 'Médico-legal'],
+  ['oper', 'Operación y equipamiento'],
+  ['ref', 'Referencia de gestión']
+];
+
+// estado: def = definitivo (destacado) · vig = vigente · ant = versión anterior · env = ya enviado
+// url: enlace a Drive (si es null, la ficha muestra «Subir a Drive»)
+const INFORMES = [
+  // ── Destacados DAU ──
+  {t:'Informe de estructura de datos de la Unidad (MDU)', tema:'dau', estado:'def', fecha:'2026-09-25', fmt:'DOCX',
+   d:'Documento base de jefatura, serie 2023 – S1 2026: oferta, demanda, indicadores, resultados y brechas priorizadas. Versión neutra de la que derivan las versiones para Dirección y equipo clínico.',
+   path:'Informe_UEH_estructura_datos_MDU.docx', url:null,
+   nota:'En Drive hay una versión anterior (12-sep). Subir la del 25-sep.', urlAnt:D('1pk6LnKnTgJwq7EDThrMNUvuEwcL8-PBc')},
+  {t:'Presentación base de jefatura', tema:'dau', estado:'def', fecha:'2026-09-25', fmt:'Slides',
+   d:'22 láminas con la estructura del informe MDU: indicadores COMGES, quiebre de junio 2026, ventana horaria de falla, boarding, abandono y 13 brechas.',
+   path:'Presentaciones urgencia/Presentacion_UEH_base_jefatura.pptx', url:S('1XzLofRiq0AHnqs_RaDwJDFe3ZVNQKUMCgGExI5Y2aIs')},
+  {t:'El paciente quirúrgico en la UEH · minuta de reunión', tema:'quir', estado:'def', fecha:'2026-11-06', fmt:'DOCX',
+   d:'Insumos para la reunión con jefes de servicio y Dirección sobre el proceso quirúrgico. DAU 2023 – S1 2026, áreas Adulto y Trauma. Cinco mensajes y gráficos G1–G8.',
+   path:'Guias reuniones/Minuta_paciente_quirurgico_UEH_reunion_06-11-2026.docx', url:null},
+  {t:'Análisis quirúrgico UEH 2023 – S1 2026 (planilla)', tema:'quir', estado:'def', fecha:'2026-11-06', fmt:'XLSX',
+   d:'Planilla auditable que respalda la minuta quirúrgica: hospitalizaciones por especialidad, tiempo de definición, boarding quirúrgico y reconsulta.',
+   path:'Guias reuniones/Analisis_quirurgico_UEH_2023_2026S1.xlsx', url:null},
+
+  // ── Versiones anteriores del análisis DAU ──
+  {t:'Informe de gestión clínico-operacional 2023 – S1 2026', tema:'dau', estado:'ant', fecha:'2026-09-11', fmt:'DOCX',
+   d:'Primera versión extensa del análisis DAU + censo. Reemplazada por el informe MDU.',
+   path:'Informe_UEH_HUAP_2023_2026S1.docx', url:D('1Q_lkTXE0H7TXB4hEeT8EDvbWmE8waLg8')},
+  {t:'Informe UEH con modificaciones', tema:'dau', estado:'ant', fecha:'2026-09-11', fmt:'DOCX',
+   d:'Borrador del informe 2023 – S1 2026 con anotaciones de cambios.',
+   path:'Informe UEH con modificaciones.docx', url:null},
+  {t:'Indicadores UEH-HUAP 2023 – S1 2026 (presentación)', tema:'dau', estado:'ant', fecha:'2026-09-11', fmt:'Slides',
+   d:'Presentación de indicadores de la serie, previa a la presentación base de jefatura.',
+   path:'Presentaciones urgencia/Indicadores_UEH_HUAP_2023_2026S1.pptx', url:S('1HMy2qMZfDv0Ab8SdEG_31x3-NVtduvO_MnRDzmVQ3ps')},
+  {t:'Presentación jefatura técnica', tema:'dau', estado:'ant', fecha:'2026-09-15', fmt:'Slides',
+   d:'Versión de la presentación orientada a la jefatura técnica.',
+   path:'(sólo en Drive)', url:S('1vgqzBhup7NNAk4hzWh3GT8fzWWYGZ5lsGqhmVa800LE')},
+  {t:'Informe periódico de gestión Ene – Jun 2026', tema:'dau', estado:'env', fecha:'2026-07-31', fmt:'DOCX',
+   d:'Informe semestral oficial del período Ene–Jun 2026 para el equipo clínico. Fuente de las cifras oficiales del semestre.',
+   path:'Informe_Periodico_Gestion_UEH_HUAP_Ene-Jun_2026.docx', url:D('1OkwZULE0hqoq72OasMBVPfDogn9U03Vw'),
+   extra:['Versión para compartir', D('1HLoGpuM_0gBhlsUvM-cDmWTyBj1QSQvK')]},
+  {t:'Indicadores UEH Ene – Jun 2026 (presentación)', tema:'dau', estado:'env', fecha:'2026-08-20', fmt:'Slides',
+   d:'Presentación de indicadores del semestre. Existe una versión de 20 minutos para Dirección.',
+   path:'Presentaciones urgencia/Indicadores_UEH_HUAP_Ene-Jun_2026.pptx', url:S('1goFZ--XMcqFjOAbBcAp0HtTXvH3uC1e75sY6dQgiVQ0')},
+  {t:'Indicadores para Dirección · 20 min (Ene – Jun 2026)', tema:'dau', estado:'env', fecha:'2026-08-20', fmt:'PPTX',
+   d:'Versión breve de los indicadores del semestre para presentación a Dirección.',
+   path:'Presentaciones urgencia/Indicadores_UEH_Direccion_20min_Ene-Jun_2026.pptx', url:null},
+  {t:'Ficha UEH-HUAP Ene – Jun 2026', tema:'dau', estado:'env', fecha:'2026-07-31', fmt:'PDF',
+   d:'Ficha resumen de una página con los indicadores del semestre.',
+   path:'Ficha_UEH_HUAP_Ene-Jun_2026.pdf', url:D('1wGrmRnGQAldvql3pnV5MtUfiLf5RzmkH')},
+  {t:'Afiche de indicadores Ene – Jun 2026', tema:'dau', estado:'env', fecha:'2026-08-06', fmt:'PDF',
+   d:'Afiche para difusión interna de los indicadores del semestre.',
+   path:'Afiche_UEH_Indicadores_Ene-Jun2026.pdf', url:D('1N-U-n4BwkXOaSglQfUppaU0YFzV2NMfL')},
+
+  // ── Boarding y flujo ──
+  {t:'Boarding y cumplimiento ESI 2 ≤ 30 min', tema:'flujo', estado:'vig', fecha:'2026-09-03', fmt:'DOCX',
+   d:'Análisis operacional de la asociación entre pacientes hospitalizados que amanecen en la Unidad y el estándar de 30 minutos en ESI 2 (2026, con 2023–2025 como sensibilidad).',
+   path:'Base de datos/Informe_boarding_C2_HUAP.docx', url:null},
+
+  // ── ANIS ──
+  {t:'Informe basal ANIS · Ene 2025 – Jul 2026', tema:'anis', estado:'vig', fecha:'2026-08-27', fmt:'DOCX',
+   d:'Línea base de actividad y desempeño desde el panel ANIS del SSMC. Documento basal de una serie de actualización mensual.',
+   path:'Serie ANIS/Informe_Basal_UEH_HUAP_ANIS_2025-2026.docx', url:null},
+  {t:'Serie histórica ANIS (planilla)', tema:'anis', estado:'vig', fecha:'2026-08-27', fmt:'XLSX',
+   d:'Serie mensual construida desde el panel ANIS, con su instructivo de extracción.',
+   path:'Serie ANIS/Serie_Historica_UEH_HUAP_ANIS.xlsx', url:null},
+
+  // ── Calidad / COMGES ──
+  {t:'Autoevaluación IFEM ED Quality Standards', tema:'calidad', estado:'vig', fecha:'2026-09-11', fmt:'DOCX',
+   d:'Diagnóstico de brechas de la UEH frente al estándar IFEM v1.0 (10 capítulos, 87 criterios, 21 CORE) y análisis del proceso de cumplimiento.',
+   path:'Proyecto IFEM/Informe_IFEM_UEH_HUAP.docx', url:null},
+  {t:'Matriz IFEM (planilla)', tema:'calidad', estado:'vig', fecha:'2026-09-11', fmt:'XLSX',
+   d:'Matriz criterio a criterio de la autoevaluación IFEM.',
+   path:'Proyecto IFEM/Matriz_IFEM_UEH_HUAP.xlsx', url:null},
+  {t:'Reporte BSC · ESI 2 ≤ 30 min (COMGES 1.10)', tema:'calidad', estado:'env', fecha:'2026-08-14', fmt:'DOCX',
+   d:'Informe de estado de avance del indicador BSC para Planificación y Control de Gestión, período Ene–Jun 2026.',
+   path:'Reporte_BSC_C2-30min_UEH_Ene-Jun2026.docx', url:null},
+  {t:'Plan de mejora COMGES 1.9 – 1.10', tema:'calidad', estado:'env', fecha:'2026-06-23', fmt:'DOCX',
+   d:'Plan de mejora solicitado por la Red de Urgencias SSMC para abandono y ESI 2 ≤ 30 min.',
+   path:'Documentos antiguos o ya enviados/Plan de mejora COMGES - actualizado.docx', url:null},
+
+  // ── Reuniones clínicas y paliativo ──
+  {t:'Terapia paliativa en la UEH · revisión de evidencia', tema:'clinica', estado:'vig', fecha:'2026-08-31', fmt:'DOCX',
+   d:'Evidencia, definiciones operativas, protocolo asistencial y vademécum de control sintomático para la reunión con la Unidad de Cuidados Paliativos.',
+   path:'Guias reuniones/Terapia_paliativa_UEH_revision_evidencia.docx', url:null},
+  {t:'Reversión de la anticoagulación · reunión clínica', tema:'clinica', estado:'vig', fecha:'2026-07-24', fmt:'DOCX',
+   d:'Guión del moderador, revisión de literatura y consejos de conducción para la reunión con Químico Farmacéutico.',
+   path:'Guias reuniones/Reunion_Reversion_Anticoagulacion.docx', url:null},
+  {t:'Paciente autista y neurodivergente en urgencia', tema:'clinica', estado:'vig', fecha:'2026-06-25', fmt:'DOCX',
+   d:'Revisión clínica, protocolo operativo y propuestas de innovación (Ley TEA 21.545) para reunión con Psiquiatría.',
+   path:'Guias reuniones/Neurodivergencia_en_Urgencia.docx', url:null},
+  {t:'Reunión clínica de trasplante (22 de mayo)', tema:'clinica', estado:'env', fecha:'2026-05-22', fmt:'DOCX',
+   d:'Material de la reunión con la Coordinación Nacional de Trasplante: por qué la donación empieza en urgencia.',
+   path:'Guias reuniones/Reunion_Clinica_Trasplante_22mayo2026.docx', url:null},
+  {t:'Implementación de cardiocirugía · consideraciones para urgencia', tema:'clinica', estado:'env', fecha:'2026-05-13', fmt:'DOCX',
+   d:'Revisión de literatura con enfoque de medicina de urgencia para la reunión de jefes clínicos.',
+   path:'Guias reuniones/Cardiocirugia_Consideraciones_Urgencia.docx', url:null},
+  {t:'Guía de reunión con Dirección', tema:'clinica', estado:'env', fecha:'2026-08-06', fmt:'Doc',
+   d:'Guión para la reunión de indicadores con Dirección.',
+   path:'Guias reuniones/Guia_reunion_direccion_UEH.md', url:G('12Ke8w1k5ixZZq4RWniw9tIpOZ449nK5UQHZKQQdG1SY')},
+  {t:'Programa Urgencias APS · reunión', tema:'clinica', estado:'vig', fecha:'2026-10-02', fmt:'DOCX',
+   d:'Documento de trabajo para la reunión sobre el programa de urgencias con Atención Primaria.',
+   path:'(sólo en Drive)', url:D('1XyfKxd7VOe3718s_iLbrrxWdbIMcTcuk')},
+
+  // ── Médico-legal ──
+  {t:'Riesgos médico-legales en urgencia · documento de referencia', tema:'legal', estado:'vig', fecha:'2026-06-26', fmt:'DOCX',
+   d:'Marco normativo, decisiones, registros e interacción con policías y fiscalía, preparado con la Unidad Jurídica.',
+   path:'Temas medico legales/02_Documento_de_referencia.docx', url:null},
+  {t:'Marco legal y médico-legal para el jefe de urgencia', tema:'legal', estado:'vig', fecha:'2026-04-29', fmt:'DOCX',
+   d:'Guía práctica de gestión legal para el inicio de funciones en el HUAP.',
+   path:'Temas medico legales/Marco_Legal_Medico_Legal_Jefe_Urgencia_HUAP.docx', url:null},
+  {t:'Plantilla de informe médico · Ley de Urgencia', tema:'legal', estado:'vig', fecha:'2026-06-25', fmt:'DOCX',
+   d:'Plantilla en blanco para la certificación de atención de urgencia (Ley 19.650).',
+   path:'Plantillas/Plantilla_Informe_Medico_LeyUrgencia.docx', url:null},
+
+  // ── Operación y equipamiento ──
+  {t:'Ecógrafos portátiles para la Unidad de Emergencia', tema:'oper', estado:'vig', fecha:'2026-07-13', fmt:'DOCX',
+   d:'Revisión comparativa de mercado de equipos POCUS con 3 transductores, con el equipo actual como referencia.',
+   path:'Insumos/Informe_Ecografos_Portatiles_Urgencia.docx', url:null},
+  {t:'Memorándum de dotación de la ambulancia institucional', tema:'oper', estado:'env', fecha:'2026-08-20', fmt:'DOCX',
+   d:'Establece la dotación operativa del móvil institucional y su modalidad excepcional de funcionamiento.',
+   path:'Documentos antiguos o ya enviados/Memorandum_dotacion_ambulancia_v2.docx', url:null},
+  {t:'Plan de contingencia C3 – C4', tema:'oper', estado:'env', fecha:'2026-05-11', fmt:'DOCX',
+   d:'Fases de ejecución durante las obras de reestructuración del triage y el C3 vertical.',
+   path:'Documentos antiguos o ya enviados/Informe Plan de Contingencia C3-C4.docx', url:null},
+
+  // ── Referencia ──
+  {t:'Informe técnico de gestión UEH 2025', tema:'ref', estado:'ant', fecha:'2026-04-23', fmt:'DOCX',
+   d:'Características organizacionales e indicadores 2025 para el equipo clínico (fuente: Sistema Orden). Superado por la serie DAU 2023 – S1 2026.',
+   path:'Datos de referencia gestión HUAP/Informe_Tecnico_UEH_2025.docx', url:null},
+  {t:'Guía de gestión para jefes de urgencia', tema:'ref', estado:'vig', fecha:'2026-04-29', fmt:'DOCX',
+   d:'Elementos teóricos y prácticos de gestión del servicio de urgencia, basados en ACEP y normativa MINSAL.',
+   path:'Datos de referencia gestión HUAP/Guia_Gestion_Jefes_Urgencia.docx', url:null}
+];
+
+// ── Render ───────────────────────────────────────────────────────
+const EST = {def:['Definitivo','t-def'], vig:['Vigente','t-vig'], ant:['Versión anterior','t-ant'], env:['Enviado','t-env']};
+const temaNombre = Object.fromEntries(TEMAS);
+const fmtFecha = s => new Date(s+'T12:00').toLocaleDateString('es-CL',{day:'numeric',month:'short',year:'numeric'});
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let temaSel = 'todos';
+
+function card(i){
+  const [en, ec] = EST[i.estado];
+  const btns = [];
+  if (i.url) btns.push(`<a class="btn" href="${i.url}" target="_blank" rel="noopener">Abrir</a>`);
+  else btns.push(`<a class="btn pend" href="${CARPETA}" target="_blank" rel="noopener" title="Arrastra el archivo a la carpeta de respaldo">Subir a Drive</a>`);
+  if (i.extra) btns.push(`<a class="btn sec" href="${i.extra[1]}" target="_blank" rel="noopener">${esc(i.extra[0])}</a>`);
+  if (i.urlAnt) btns.push(`<a class="btn sec" href="${i.urlAnt}" target="_blank" rel="noopener">Versión en Drive</a>`);
+  return `<article class="card ${i.estado==='def'?'star':''} ${i.estado==='ant'?'old':''}">
+    <div class="meta"><span class="tag ${ec}">${en}</span><span class="tag t-fmt">${esc(i.fmt)}</span><span>${fmtFecha(i.fecha)}</span><span>· ${esc(temaNombre[i.tema])}</span></div>
+    <h3>${esc(i.t)}</h3>
+    <p class="desc">${esc(i.d)}</p>
+    ${i.nota?`<p class="path"><b>Nota:</b> ${esc(i.nota)}</p>`:''}
+    <div class="path">📁 ${esc(i.path)}</div>
+    <div class="actions">${btns.join('')}</div>
+  </article>`;
+}
+
+function render(){
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  const old = document.getElementById('showOld').checked;
+  const match = i => (!q || (i.t+' '+i.d+' '+i.path+' '+temaNombre[i.tema]).toLowerCase().includes(q))
+                  && (temaSel==='todos' || i.tema===temaSel) && (old || i.estado!=='ant');
+  const hero = INFORMES.filter(i => i.estado==='def' && match(i));
+  document.getElementById('hero').innerHTML = hero.map(card).join('');
+  document.getElementById('hero-sec').style.display = hero.length ? '' : 'none';
+
+  let html = '';
+  for (const [k, nombre] of TEMAS){
+    const items = INFORMES.filter(i => i.tema===k && i.estado!=='def' && match(i))
+                          .sort((a,b) => b.fecha.localeCompare(a.fecha));
+    if (!items.length) continue;
+    html += `<h2>${esc(nombre)} <span class="n">${items.length}</span></h2><div class="grid">${items.map(card).join('')}</div>`;
+  }
+  document.getElementById('list').innerHTML = html || (hero.length ? '' : '<p class="empty">Sin resultados.</p>');
+}
+
+const chips = document.getElementById('chips');
+chips.innerHTML = [['todos','Todos'],...TEMAS].map(([k,n]) =>
+  `<button class="chip" data-k="${k}" aria-pressed="${k==='todos'}">${n}</button>`).join('');
+chips.addEventListener('click', e => {
+  const b = e.target.closest('.chip'); if (!b) return;
+  temaSel = b.dataset.k;
+  chips.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', c===b));
+  render();
+});
+document.getElementById('q').addEventListener('input', render);
+document.getElementById('showOld').addEventListener('change', render);
+document.getElementById('upd').textContent = ACTUALIZADO;
+render();
+</script>
+</body>
+</html>
